@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Dialog Box</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .dialog-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dialog-box {
+            display: flex;
+            align-items: center;
+            width: 50%;
+            max-width: 600px;
+        }
+
+        .dialog-box textarea {
+            flex-grow: 1;
+            height: 50px;
+            resize: none;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .dialog-box button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dialog-box button:hover {
+            background-color: #45a049;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Take full height of the viewport */
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+
+        .message-list {
+            flex: 1; /* Grow to take available space */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding: 10px;
+            box-sizing: border-box; /* Include padding in width/height calculations */
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+
+    <!-- Messages -->
+    <div class="message-list">
+        <div th:each="message : ${messages}" class="message" th:text="${message}"></div>
+    </div>
+
+    <!-- Dialog Box at Bottom -->
+    <div class="dialog-container">
+        <div class="dialog-box">
+            <form action="/sendMessage" method="post" id="chatForm">
+                <textarea id="messageInput" name="message" placeholder="Type your message here..."></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to scroll the message list to the bottom
+        function scrollToBottom() {
+            const messageList = document.querySelector('.message-list');
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+
+        // Scroll to the bottom on page load
+        scrollToBottom();
+        document.getElementById("chatForm").addEventListener("submit", function(event) {
+            // Wait a bit for the DOM to update
+            setTimeout(scrollToBottom, 100); // Adjust timeout as needed
+        });
+    });
+    document.addEventListener("keydown", function(event) {
+        const messageInput = document.getElementById("messageInput");
+
+        if (event.key === "Enter") {
+            if (document.activeElement !== messageInput) {
+                // If the dialog box (textarea) is not focused, focus on it
+                event.preventDefault();
+                messageInput.focus();
+            } else {
+                // If the dialog box is already focused, submit the form
+                event.preventDefault(); // Prevent newline behavior
+                document.getElementById("chatForm").submit();
+            }
+        }
+    });
+</script>
+</body>
+</html>
