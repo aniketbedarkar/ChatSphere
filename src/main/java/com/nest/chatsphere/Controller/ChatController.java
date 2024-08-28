@@ -1,30 +1,37 @@
 package com.nest.chatsphere.Controller;
 
-import org.springframework.ui.Model;
+import com.nest.chatsphere.Service.MessageService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class ChatController {
-    private final List<String> messages = new ArrayList<>();
+
+    @Autowired
+    MessageService messageService;
 
     @GetMapping
     public String loadHome(){
+        log.info("Loading home page");
         return "index";
     }
 
     @PostMapping("/sendMessage")
     public String sendMessage(@RequestParam("message") String message, Model model) {
+        log.info("Sending message");
         if (!message.trim().isEmpty()) {
-            messages.add(message);
+            messageService.addMessages(message);
         }
+        List<String> messages = messageService.getMessages();
         model.addAttribute("messages", messages);
         return "index";
     }
-
 }
