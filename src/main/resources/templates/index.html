@@ -111,6 +111,19 @@
             position: relative;
         }
 
+        .message.sender {
+            background-color: #dcf8c6;
+            /* Light green for sender messages */
+            margin-left: auto;
+            text-align: left;
+        }
+
+        .message.other {
+            /* White for other messages */
+            margin-right: auto;
+            text-align: left;
+        }
+
         .message-text {
             margin: 0;
             padding: 5px;
@@ -131,72 +144,85 @@
 </head>
 
 <body>
-<div class="chat-container">
+    <div class="chat-container">
 
-    <!-- Messages -->
-    <div class="message-list" id="messageList">
-        <div th:each="message : ${messages}" class="message" th:text="${message}"></div>
-    </div>
+        <!-- Messages -->
+        <div class="message-list" id="messageList">
+            <div th:each="message : ${messages}" class="message" th:text="${message}"></div>
+        </div>
 
-    <!-- Dialog Box at Bottom -->
-    <div class="dialog-container">
-        <div class="dialog-box">
-            <form action="/api/v1/chat/sendMessage" method="post" id="chatForm">
-                <textarea id="messageInput" name="message" placeholder="Type your message here..."></textarea>
-                <button type="submit">Send</button>
-            </form>
+        <!-- Dialog Box at Bottom -->
+        <div class="dialog-container">
+            <div class="dialog-box">
+                <form action="/api/v1/chat/sendMessage" method="post" id="chatForm">
+                    <textarea id="messageInput" name="message" placeholder="Type your message here..."></textarea>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const messageInput = document.getElementById("messageInput");
-    messageInput.focus();
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // Function to scroll the message list to the bottom
-        function scrollToBottom() {
-            const messageList = document.querySelector('.message-list');
-            messageList.scrollTop = messageList.scrollHeight;
-        }
-
-        // Scroll to the bottom on page load
-        scrollToBottom();
-        document.getElementById("chatForm").addEventListener("submit", function(event) {
-            // Wait a bit for the DOM to update
-            setTimeout(scrollToBottom, 100); // Adjust timeout as needed
-        });
-    });
-    document.addEventListener("keydown", function(event) {
+    <script>
         const messageInput = document.getElementById("messageInput");
+        messageInput.focus();
+        let globalHashcode;
 
-        if (event.key === "Enter") {
-            if (document.activeElement !== messageInput) {
-                // If the dialog box (textarea) is not focused, focus on it
-                event.preventDefault();
-                messageInput.focus();
-            } else {
-                // If the dialog box is already focused, submit the form
-                event.preventDefault(); // Prevent newline behavior
-                document.getElementById("chatForm").submit();
+        document.addEventListener("DOMContentLoaded", function () {
+            // Function to scroll the message list to the bottom
+            function scrollToBottom() {
+                const messageList = document.querySelector('.message-list');
+                messageList.scrollTop = messageList.scrollHeight;
             }
-        }
-    });
+
+            // Scroll to the bottom on page load
+            scrollToBottom();
+            document.getElementById("chatForm").addEventListener("submit", function (event) {
+                // Wait a bit for the DOM to update
+                setTimeout(scrollToBottom, 100); // Adjust timeout as needed
+            });
+        });
+        document.addEventListener("keydown", function (event) {
+            const messageInput = document.getElementById("messageInput");
+
+            if (event.key === "Enter") {
+                if (document.activeElement !== messageInput) {
+                    // If the dialog box (textarea) is not focused, focus on it
+                    event.preventDefault();
+                    messageInput.focus();
+                } else {
+                    // If the dialog box is already focused, submit the form
+                    event.preventDefault(); // Prevent newline behavior
+                    document.getElementById("chatForm").submit();
+                }
+            }
+        });
 
 
-    function fetchMessages() {
-        fetch('/api/v1/message/getMessages')
-            .then(response => response.json())
-            .then(messages => {
+        async function fetchMessages() {
+            try {
+                const currentUserId = await getHashcode(); // Await the hashcode
+
+                if (currentUserId === null) {
+                    console.error('Unable to retrieve current user hashcode');
+                    return;
+                }
+
+                const response = await fetch('/api/v1/message/getMessages');
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const messages = await response.json();
                 const messageList = document.getElementById('messageList');
                 messageList.innerHTML = ''; // Clear existing messages
+
                 messages.forEach(message => {
                     const messageDiv = document.createElement('div');
-                    messageDiv.className = 'message';
+                    console.log("check check: ", message.requestHash===currentUserId);
+                    messageDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'}`;
 
                     const color = hashToColor(message.requestHash);
-
-                    // color = hashToColor(message.requestHash);
 
                     // Set background color for the message
                     messageDiv.style.backgroundColor = color;
@@ -217,45 +243,70 @@
 
                     messageList.appendChild(messageDiv);
                 });
-            })
-            .catch(error => console.error('Error fetching messages:', error));
-    }
-
-    // Initial fetch
-    fetchMessages();
-
-    // Fetch messages every second
-    setInterval(fetchMessages, 1000);
-
-    let colorMap = new Map();
-    function saveColor(message){
-        colorMap.set(message.requestHash,message.text);
-    }
-    function hashToColor(hash) {
-        if(colorMap.get(hash) != null){
-            return colorMap.get(hash);
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
         }
-        // Ensure the hash is treated as a number
-        let hashValue = parseInt(hash, 10);
 
-        // Ensure hashValue is positive (for simplicity)
-        hashValue = Math.abs(hashValue);
+        // Initial fetch
+        fetchMessages();
 
-        // Convert the hash value to a 6-digit hexadecimal color
-        let color = '#' + ('000000' + (hashValue & 0xFFFFFF).toString(16)).slice(-6);
+        // Fetch messages every second
+        setInterval(fetchMessages, 1000);
 
-        return color;
-    }
+        let colorMap = new Map();
+        function saveColor(message) {
+            colorMap.set(message.requestHash, message.text);
+        }
+        function hashToColor(hash) {
+            if (colorMap.get(hash) != null) {
+                return colorMap.get(hash);
+            }
+            // Ensure the hash is treated as a number
+            let hashValue = parseInt(hash, 10);
+
+            // Ensure hashValue is positive (for simplicity)
+            hashValue = Math.abs(hashValue);
+
+            // Convert the hash value to a 6-digit hexadecimal color
+            let color = '#' + ('000000' + (hashValue & 0xFFFFFF).toString(16)).slice(-6);
+
+            return color;
+        }
 
 
-    function formatTimestamp(isoString) {
-        const date = new Date(isoString);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`; // Format as HH:MM
-    }
+        function formatTimestamp(isoString) {
+            const date = new Date(isoString);
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`; // Format as HH:MM
+        }
 
-</script>
+
+        async function getHashcode() {
+            try {
+                const response = await fetch('/api/v1/message/getHashcode');
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                if (data && data.hashcode !== undefined) {
+                    console.log("hashcode from getHashcode: ", data.hashcode);
+                    return data.hashcode; // Return the hashcode
+                } else {
+                    console.error('Unexpected response format:', data);
+                    return null; // Return null or handle unexpected format
+                }
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                return null; // Return null or handle error
+            }
+        }
+
+    </script>
 </body>
 
 </html>
