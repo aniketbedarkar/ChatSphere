@@ -134,7 +134,9 @@
 <div class="chat-container">
 
     <!-- Messages -->
-    <div class="message-list" id="messageList"><div class="message" style="background-color: rgb(160, 58, 161);"><p class="message-text">asdfasdfasjdhfkadfladhkahdffsadlfhalkdhflakdhflkahdfjsahdkhasljdfhasldhflashdflkahdfashdfhsaskdf</p><span class="message-time">12:56</span></div><div class="message" style="background-color: rgb(160, 58, 161);"><p class="message-text">asdfadf</p><span class="message-time">12:56</span></div><div class="message" style="background-color: rgb(160, 58, 161);"><p class="message-text">asdf</p><span class="message-time">12:56</span></div><div class="message" style="background-color: rgb(160, 58, 161);"><p class="message-text">asdf</p><span class="message-time">12:57</span></div><div class="message" style="background-color: rgb(69, 83, 191);"><p class="message-text">Hi</p><span class="message-time">12:58</span></div><div class="message" style="background-color: rgb(245, 100, 201);"><p class="message-text">asdf</p><span class="message-time">15:54</span></div></div>
+    <div class="message-list" id="messageList">
+        <div th:each="message : ${messages}" class="message" th:text="${message}"></div>
+    </div>
 
     <!-- Dialog Box at Bottom -->
     <div class="dialog-container">
