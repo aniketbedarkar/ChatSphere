@@ -1,9 +1,11 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    overflow: hidden;
 }
 
 .navbar {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -29,6 +31,7 @@ body {
 }
 
 .message-container {
+    flex: 1;
     height: calc(100vh - 120px);
     overflow-y: auto;
     padding: 10px;
@@ -78,6 +81,7 @@ body {
 }
 
 .editor-container {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     padding: 10px;

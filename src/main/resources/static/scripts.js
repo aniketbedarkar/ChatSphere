@@ -1,21 +1,61 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
 let globalHashcode;
+// Function to scroll the message list to the bottom
+function scrollToBottom() {
+    const messageList = document.querySelector('.message-container');
+    messageList.scrollTop = messageList.scrollHeight;
+}
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Function to scroll the message list to the bottom
-    function scrollToBottom() {
-        const messageList = document.querySelector('.message-list');
-        messageList.scrollTop = messageList.scrollHeight;
-    }
 
-    // Scroll to the bottom on page load
-    scrollToBottom();
-    document.getElementById("chatForm").addEventListener("submit", function (event) {
-        // Wait a bit for the DOM to update
-        setTimeout(scrollToBottom, 100); // Adjust timeout as needed
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('chatForm');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevents the default form submission (page reload)
+
+        const formData = new FormData(form);
+        const data = new URLSearchParams(formData).toString();
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: data,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                // Optionally, you can handle the result here
+                // For example, you might want to append the new message to the message list
+                // const messageList = document.getElementById('messageList');
+                // // Assuming the server responds with the new message's HTML or JSON data
+                // messageList.innerHTML += `<div>${result.message}</div>`;
+                form.reset(); // Clear the input field after submission
+            } else {
+                console.error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     });
 });
+
+
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     // Scroll to the bottom on page load
+//     scrollToBottom();
+//     document.getElementById("chatForm").addEventListener("submit", function (event) {
+//         // Wait a bit for the DOM to update
+//         setTimeout(scrollToBottom, 100); // Adjust timeout as needed
+//     });
+// });
+
+
+
 document.addEventListener("keydown", function (event) {
     const messageInput = document.getElementById("messageInput");
 
@@ -54,7 +94,6 @@ async function fetchMessages() {
 
         messages.forEach(message => {
             const messageDiv = document.createElement('div');
-            console.log("check check: ", message.requestHash === currentUserId);
             messageDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'}`;
 
             const color = hashToColor(message.requestHash);
@@ -129,7 +168,6 @@ async function getHashcode() {
         const data = await response.json();
 
         if (data && data.hashcode !== undefined) {
-            console.log("hashcode from getHashcode: ", data.hashcode);
             return data.hashcode; // Return the hashcode
         } else {
             console.error('Unexpected response format:', data);

@@ -8,9 +8,9 @@
 </head>
 <body>
     <div class="navbar">
-        <div class="profile-pic"></div>
-        <div class="status">Online</div>
-        <div class="settings">...</div>
+        <div id="profilePicId" class="profile-pic"></div>
+        <div id="statusId" class="status">Online</div>
+        <div id="settingsId" class="settings">...</div>
     </div>
 
     <div class="message-container" id="messageList">
@@ -19,14 +19,10 @@
 
     <div class="editor-container">
         <form id="chatForm" action="/api/v1/chat/sendMessage" method="post">
-            <form action="/api/v1/chat/sendMessage" method="post" id="chatForm">
-                <input type="text" id="messageInput" name="message" placeholder="Type your message here..." required>
-                <button type="submit">Send</button>
-            </form>
-        </div>
-
-
-
+            <input type="text" id="messageInput" name="message" placeholder="Type your message here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
 
     <script src="/scripts.js"></script>
 </body>
