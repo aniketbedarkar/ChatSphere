@@ -1,7 +1,6 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    overflow: hidden;
 }
 
 .navbar {
@@ -110,4 +109,31 @@ body {
     color: white;
     cursor: pointer;
     font-size: 16px;
+}
+
+
+.scroll-down-btn {
+    position: fixed;
+    bottom: 70px; /* Adjust if you want some space from the bottom */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    background-color: #33333341;
+    color: #333;
+    border: 2px solid #333; /* Border color and width */
+    border-radius: 50%; /* Ensure it's circular */
+    width: 50px; /* Adjust the size of the button */
+    height: 50px; /* Ensure the height is equal to the width for a perfect circle */
+    padding: 0; /* Remove any extra padding */
+    font-size: 24px;
+    display: flex; /* Use flexbox to center the content */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.scroll-down-btn:hover {
+    background-color: #242424;
+    color: #f1f1f1; /* Change text color on hover for better contrast */
 }

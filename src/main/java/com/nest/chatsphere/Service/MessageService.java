@@ -43,7 +43,7 @@ public class MessageService {
 
     public int getHashCode(HttpServletRequest request) {
         int hashcode = (request.getHeader("User-Agent")+request.getRemoteAddr()).hashCode();
-        log.info("Getting hashcode: "+hashcode);
+//        log.info("Getting hashcode: "+hashcode);
         return hashcode;
     }
 }

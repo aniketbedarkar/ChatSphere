@@ -20,9 +20,12 @@
     <div class="editor-container">
         <form id="chatForm" action="/api/v1/chat/sendMessage" method="post">
             <input type="text" id="messageInput" name="message" placeholder="Type your message here..." required>
-            <button type="submit">Send</button>
+            <button type="submit" id="sendMessageButton">Send</button>
         </form>
     </div>
+
+     <!-- Scroll Down Button -->
+     <button id="scrollDownBtn" class="scroll-down-btn">↓</button>
 
     <script src="/scripts.js"></script>
 </body>

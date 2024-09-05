@@ -1,59 +1,43 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
-let globalHashcode;
-// Function to scroll the message list to the bottom
-function scrollToBottom() {
-    const messageList = document.querySelector('.message-container');
-    messageList.scrollTop = messageList.scrollHeight;
-}
-
 
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('chatForm');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevents the default form submission (page reload)
+    const messageList = document.getElementById('messageList');
+    const scrollDownBtn = document.getElementById('scrollDownBtn');
 
-        const formData = new FormData(form);
-        const data = new URLSearchParams(formData).toString();
+    // Function to scroll to the bottom
+    function scrollToBottom() {
+        messageList.scrollTop = messageList.scrollHeight;
+    }
 
-        try {
-            const response = await fetch(form.action, {
-                method: form.method,
-                body: data,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                // Optionally, you can handle the result here
-                // For example, you might want to append the new message to the message list
-                // const messageList = document.getElementById('messageList');
-                // // Assuming the server responds with the new message's HTML or JSON data
-                // messageList.innerHTML += `<div>${result.message}</div>`;
-                form.reset(); // Clear the input field after submission
-            } else {
-                console.error('Failed to send message');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    // Function to check scroll position and show/hide the button
+    function checkScrollPosition() {
+        if (messageList.scrollHeight - messageList.scrollTop > messageList.clientHeight + 50) {
+            // Show button if not scrolled to the bottom
+            scrollDownBtn.style.display = 'block';
+        } else {
+            // Hide button if scrolled to the bottom
+            scrollDownBtn.style.display = 'none';
         }
+    }
+
+    // Scroll event listener
+    messageList.addEventListener('scroll', checkScrollPosition);
+
+    // Button click event to scroll to the bottom
+    scrollDownBtn.addEventListener('click', () => {
+        scrollToBottom();
+        // Hide the button after scrolling down
+        scrollDownBtn.style.display = 'none';
     });
+
+    // Initial check to set the button state
+    checkScrollPosition();
+
+    // Initial scroll to bottom (optional)
+    scrollToBottom();
+    
 });
-
-
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     // Scroll to the bottom on page load
-//     scrollToBottom();
-//     document.getElementById("chatForm").addEventListener("submit", function (event) {
-//         // Wait a bit for the DOM to update
-//         setTimeout(scrollToBottom, 100); // Adjust timeout as needed
-//     });
-// });
-
 
 
 document.addEventListener("keydown", function (event) {
@@ -70,6 +54,7 @@ document.addEventListener("keydown", function (event) {
             document.getElementById("chatForm").submit();
         }
     }
+
 });
 
 

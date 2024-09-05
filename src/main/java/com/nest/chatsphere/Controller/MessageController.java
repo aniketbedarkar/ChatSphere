@@ -38,7 +38,7 @@ public class MessageController {
 
     @GetMapping("/getHashcode")
     public ResponseEntity<?> getHashcode(HttpServletRequest request) {
-        log.info("Getting hashcode");
+//        log.info("Getting hashcode");
         return ResponseEntity.ok(Collections.singletonMap("hashcode",String.valueOf(messageService.getHashCode(request))));
     }
 
