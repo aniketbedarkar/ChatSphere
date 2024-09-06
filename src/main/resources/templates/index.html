@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <div id="profilePicId" class="profile-pic"></div>
+        <div id="statusId" class="status">Online</div>
+        <div id="settingsId" class="settings">...</div>
+    </div>
+
+    <div class="message-container" id="messageList">
+        <!-- Messages will be dynamically loaded here -->
+    </div>
+
+    <div class="editor-container">
+        <form id="chatForm" action="/api/v1/chat/sendMessage" method="post">
+            <input type="text" id="messageInput" name="message" placeholder="Type your message here..." required>
+            <button type="submit" id="sendMessageButton">Send</button>
+        </form>
+    </div>
+
+     <!-- Scroll Down Button -->
+     <button id="scrollDownBtn" class="scroll-down-btn">↓</button>
+
+    <script src="/scripts.js"></script>
+</body>
+</html>
