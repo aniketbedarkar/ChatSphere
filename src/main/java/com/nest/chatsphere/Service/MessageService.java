@@ -1,5 +1,6 @@
 package com.nest.chatsphere.Service;
 
+import com.nest.chatsphere.entity.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -19,17 +22,14 @@ public class MessageService {
     private String deleteCode;
 
     @Getter
-    private List<Map<String,String>> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     public void addMessages(String message, int requestHash) {
         if(message.startsWith("/")){
             codedMessage(message);
         }else {
-            Map<String, String> messageMap = new HashMap<>();
-            messageMap.put("text", message);
-            messageMap.put("timeStamp", getCurrentTimestamp());
-            messageMap.put("requestHash", String.valueOf(requestHash));
-            this.messages.add(messageMap);
+            Message newMessage = new Message(message,getCurrentTimestamp(),String.valueOf(requestHash));
+            this.messages.add(newMessage);
         }
     }
 
@@ -48,17 +48,13 @@ public class MessageService {
         return date;
     }
 
-    public List<Map<String,String>> getEmptyMessages() {
-        Map<String,String> noMessageMap = new HashMap<>();
-        noMessageMap.put("timeStamp",getCurrentTimestamp());
-        noMessageMap.put("text","No messages yet.");
-        noMessageMap.put("requestHash",String.valueOf("Chatbox".hashCode()));
-        return Collections.singletonList(noMessageMap);
+    public List<Message> getEmptyMessages() {
+        Message emptyMessage = new Message("No messages yet.",getCurrentTimestamp(),String.valueOf("Chatbox".hashCode()));
+        return Collections.singletonList(emptyMessage);
     }
 
     public int getHashCode(HttpServletRequest request) {
         int hashcode = (request.getHeader("User-Agent")+request.getRemoteAddr()).hashCode();
-//        log.info("Getting hashcode: "+hashcode);
         return hashcode;
     }
 

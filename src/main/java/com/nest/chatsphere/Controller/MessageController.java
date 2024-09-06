@@ -1,6 +1,7 @@
 package com.nest.chatsphere.Controller;
 
 import com.nest.chatsphere.Service.MessageService;
+import com.nest.chatsphere.entity.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/message")
@@ -23,10 +22,8 @@ public class MessageController {
 
     @GetMapping("/getMessages")
     public ResponseEntity<?> getMessage() {
-//        log.info("Getting messages");
-        List<Map<String,String>> messages = messageService.getMessages();
+        List<Message> messages = messageService.getMessages();
         if(messages.isEmpty()){
-//            log.info("Getting messages: No messages");
         	return ResponseEntity.ok(messageService.getEmptyMessages());
         }
         log.debug("Getting messages: "+messages);
@@ -35,7 +32,6 @@ public class MessageController {
 
     @GetMapping("/getHashcode")
     public ResponseEntity<?> getHashcode(HttpServletRequest request) {
-//        log.info("Getting hashcode");
         return ResponseEntity.ok(Collections.singletonMap("hashcode",String.valueOf(messageService.getHashCode(request))));
     }
 

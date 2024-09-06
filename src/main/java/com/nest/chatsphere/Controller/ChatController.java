@@ -1,7 +1,7 @@
 package com.nest.chatsphere.Controller;
 
 import com.nest.chatsphere.Service.MessageService;
-
+import com.nest.chatsphere.entity.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller
@@ -34,7 +33,7 @@ public class ChatController {
         if (!message.trim().isEmpty()) {
             messageService.addMessages(message, requestHash);
         }
-        List<Map<String,String>> messages = messageService.getMessages();
+        List<Message> messages = messageService.getMessages();
         model.addAttribute("messages", messages);
         return "index";
     }
