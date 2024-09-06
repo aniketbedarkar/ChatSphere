@@ -1,6 +1,5 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
-
 document.addEventListener('DOMContentLoaded', () => {
     const messageList = document.getElementById('messageList');
     const scrollDownBtn = document.getElementById('scrollDownBtn');
@@ -104,6 +103,12 @@ async function fetchMessages() {
     } catch (error) {
         console.error('Error fetching messages:', error);
     }
+
+    if (!(messageList.scrollHeight - messageList.scrollTop > messageList.clientHeight + 100)) {
+        const messageList = document.getElementById('messageList');
+        messageList.scrollTop = messageList.scrollHeight;
+    }
+
 }
 
 // Initial fetch
@@ -202,7 +207,6 @@ document.getElementById('chatForm').addEventListener('submit', async function (e
         }
 
         const result = await response.json();
-        console.log('Success:', result);
 
         // Optionally, you can clear the input field after successful submission
         document.getElementById('messageInput').value = '';
@@ -215,9 +219,9 @@ document.getElementById('chatForm').addEventListener('submit', async function (e
     try {
         await fetchMessages();
     } catch (error) {
-        console.error("Fetch from send error: ",error);
+        console.error("Fetch from send error: ", error);
     }
-    
+
     try {
         const messageList = document.getElementById('messageList');
         messageList.scrollTop = messageList.scrollHeight;
