@@ -163,3 +163,26 @@ async function getHashcode() {
         return null; // Return null or handle error
     }
 }
+
+
+function adjustLayout() {
+    // Get the height of the viewport
+    const viewportHeight = window.innerHeight;
+
+    // Get the height of the navbar and editor container (fixed heights)
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    const editorHeight = document.querySelector('.editor-container').offsetHeight;
+
+    // Calculate the height of the message container
+    const messageContainerHeight = viewportHeight - (navbarHeight + editorHeight+20);
+
+    // Set the height of the message container
+    document.querySelector('.message-container').style.height = `${messageContainerHeight}px`;
+}
+
+// Run on load
+window.addEventListener('load', adjustLayout);
+
+// Run on resize
+window.addEventListener('resize', adjustLayout);
+
