@@ -2,6 +2,7 @@ package com.nest.chatsphere.Controller;
 
 import com.nest.chatsphere.Service.MessageService;
 import com.nest.chatsphere.entity.Message;
+import com.nest.chatsphere.response.ChatSphereResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,15 @@ public class MessageController {
 
     @Autowired
     MessageService messageService;
+
+    @PostMapping("/sendMessage")
+    public ResponseEntity<?> sendMessage(@RequestParam("message") String message, HttpServletRequest request){
+        int requestHash = messageService.getHashCode(request);
+        if (!message.trim().isEmpty()) {
+            messageService.addMessages(message, requestHash);
+        }
+        return ResponseEntity.ok().body(ChatSphereResponse.builder().status(ChatSphereResponse.ResponseStatus.SUCCESS).build());
+    }
 
     @GetMapping("/getMessages")
     public ResponseEntity<?> getMessage() {
