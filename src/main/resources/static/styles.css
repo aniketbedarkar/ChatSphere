@@ -40,12 +40,41 @@ body {
 
 .message {
     padding: 15px;
-    margin: 8px 0;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: fit-content;
     min-width: 20%;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.message.sender.outer {
+    padding: 10px;
+    padding-left: 3px;
+    padding-bottom: 3px;
+    padding-right: 3px;
+    margin-left: auto;
+    margin-bottom: 6px;
+    background-color: #f8f9fa; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: fit-content;
+    max-width: 80%;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.message.other.outer {
+    padding: 10px;
+    padding-left: 3px;
+    padding-bottom: 3px;
+    padding-right: 3px;
+    margin-right: auto;
+    margin-bottom: 6px;
+    background-color: #f8f9fa; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: fit-content;
     max-width: 80%;
     word-wrap: break-word;
     position: relative;
@@ -53,13 +82,11 @@ body {
 
 .message.sender {
     background-color: #dcf8c6;
-    margin-left: auto;
     text-align: left;
 }
 
 .message.other {
     background-color: #d1e7dd;
-    margin-right: auto;
     text-align: left;
 }
 

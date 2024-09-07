@@ -78,13 +78,14 @@ async function fetchMessages() {
         messageList.innerHTML = ''; // Clear existing messages
 
         messages.forEach(message => {
+            const messageOuterDiv = document.createElement('div');
+            messageOuterDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'} outer`;
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'}`;
-
             const color = hashToColor(message.requestHash);
 
             // Set background color for the message
-            messageDiv.style.backgroundColor = color;
+            messageOuterDiv.style.backgroundColor = color;
 
             // Create message text element
             const messageText = document.createElement('p');
@@ -99,8 +100,8 @@ async function fetchMessages() {
             // Append text and time to the message div
             messageDiv.appendChild(messageText);
             messageDiv.appendChild(messageTime);
-
-            messageList.appendChild(messageDiv);
+            messageOuterDiv.appendChild(messageDiv);
+            messageList.appendChild(messageOuterDiv);
         });
     } catch (error) {
         console.error('Error fetching messages:', error);
