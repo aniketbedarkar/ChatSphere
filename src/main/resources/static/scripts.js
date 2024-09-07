@@ -36,12 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial check to set the button state
     checkScrollPosition();
-
+    firstScrollToBottom();
     // Initial scroll to bottom (optional)
     scrollToBottom();
 
 });
 
+async function firstScrollToBottom() {
+    await fetchMessages();
+    const messageList = document.getElementById('messageList');
+    messageList.scrollTop = messageList.scrollHeight;
+}
 
 document.addEventListener("keydown", function (event) {
     const messageInput = document.getElementById("messageInput");
