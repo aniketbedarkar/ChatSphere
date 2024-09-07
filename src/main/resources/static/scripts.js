@@ -85,6 +85,13 @@ async function fetchMessages() {
 
         const data = await response.json();
         currentAllActiveHashcode = data.activeHashes;
+
+        // console.log(data.colors);
+        if (data.colors && typeof data.colors === 'object') {
+            Object.entries(data.colors).forEach(([hash, color]) => {
+                saveColor(hash, color);
+            });
+        }
         showActiveMembers();
         const messages = data.messages;
         const messageList = document.getElementById('messageList');
@@ -95,6 +102,7 @@ async function fetchMessages() {
             messageOuterDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'} outer`;
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.requestHash === currentUserId ? 'sender' : 'other'}`;
+
             const color = hashToColor(message.requestHash);
 
             // Set background color for the message
@@ -134,8 +142,9 @@ fetchMessages();
 setInterval(fetchMessages, 1000);
 
 let colorMap = new Map();
-function saveColor(message) {
-    colorMap.set(message.requestHash, message.text);
+function saveColor(hash, color) {
+    colorMap.set(hash, color);
+    console.log(colorMap);
 }
 function hashToColor(hash) {
     if (colorMap.get(hash) != null) {
@@ -149,7 +158,7 @@ function hashToColor(hash) {
 
     // Convert the hash value to a 6-digit hexadecimal color
     let color = '#' + ('000000' + (hashValue & 0xFFFFFF).toString(16)).slice(-6);
-
+    saveColor(hash, color);
     return color;
 }
 

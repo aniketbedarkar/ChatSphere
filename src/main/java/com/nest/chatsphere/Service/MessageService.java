@@ -20,25 +20,36 @@ public class MessageService {
     @Value("${code.delete.all}")
     private String deleteCode;
 
+    @Value("${code.set.myColor}")
+    private String setMyColor;
+
     @Getter
     private List<Message> messages = new ArrayList<>();
 
     @Getter
     private Set<String> allActiveHashcodes = new HashSet<>();
 
+    private HashMap<String,String> colorsSet = new HashMap<>();
+
     public void addMessages(String message, int requestHash) {
         if(message.startsWith("/")){
-            codedMessage(message);
+            codedMessage(message, requestHash);
         }else {
             Message newMessage = new Message(message,getCurrentTimestamp(),String.valueOf(requestHash));
             this.messages.add(newMessage);
         }
     }
 
-    private void codedMessage(String code) {
+    private void codedMessage(String code, int requestHash) {
         if(code.equals(deleteCode)){
             deleteAllMesages();
+        }else if(code.startsWith(setMyColor)){
+            setMyColor(code, String.valueOf(requestHash));
         }
+    }
+
+    private void setMyColor(String code, String requestHash) {
+        colorsSet.put(requestHash,code.trim().split("=")[1]);
     }
 
     public static String getCurrentTimestamp() {
@@ -73,6 +84,7 @@ public class MessageService {
             messagesDTO.setMessages(getMessages());
         }
         messagesDTO.setActiveHashes(getAllActiveHashcodes());
+        messagesDTO.setColors(colorsSet);
         return messagesDTO;
     }
 
