@@ -1,5 +1,9 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
+
+// Variable to store the hashcode
+let currentUserHashcode = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const messageList = document.getElementById('messageList');
     const scrollDownBtn = document.getElementById('scrollDownBtn');
@@ -58,7 +62,10 @@ document.addEventListener("keydown", function (event) {
 
 async function fetchMessages() {
     try {
-        const currentUserId = await getHashcode(); // Await the hashcode
+        if (currentUserHashcode === undefined || currentUserHashcode === null) {
+            await getHashcode();
+        }
+        const currentUserId = currentUserHashcode;
 
         if (currentUserId === null) {
             console.error('Unable to retrieve current user hashcode');
@@ -147,6 +154,7 @@ function formatTimestamp(isoString) {
 }
 
 
+// Function to fetch the hashcode
 async function getHashcode() {
     try {
         const response = await fetch('/api/v1/message/getHashcode');
@@ -158,16 +166,21 @@ async function getHashcode() {
         const data = await response.json();
 
         if (data && data.hashcode !== undefined) {
-            return data.hashcode; // Return the hashcode
+            currentUserHashcode = data.hashcode; // Store the hashcode
+            console.log('Hashcode updated:', currentUserHashcode);
         } else {
             console.error('Unexpected response format:', data);
-            return null; // Return null or handle unexpected format
         }
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return null; // Return null or handle error
+        console.error('Error fetching hashcode:', error);
     }
 }
+
+// Fetch the hashcode initially
+getHashcode();
+
+// Fetch the hashcode every 5 minutes
+setInterval(getHashcode, 300000); // 5 minutes in milliseconds
 
 
 function adjustLayout() {
