@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -16,4 +17,5 @@ import java.util.Set;
 public class messagesDTO {
     private List<Message> messages;
     private Set<String> activeHashes;
+    private HashMap<String,String> colors;
 }
