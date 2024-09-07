@@ -1,5 +1,6 @@
 package com.nest.chatsphere.Service;
 
+import com.nest.chatsphere.dto.messagesDTO;
 import com.nest.chatsphere.entity.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -10,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -23,6 +22,9 @@ public class MessageService {
 
     @Getter
     private List<Message> messages = new ArrayList<>();
+
+    @Getter
+    private Set<String> allActiveHashcodes = new HashSet<>();
 
     public void addMessages(String message, int requestHash) {
         if(message.startsWith("/")){
@@ -61,5 +63,30 @@ public class MessageService {
     public boolean deleteAllMesages() {
         messages = new ArrayList<>();
         return true;
+    }
+
+    public messagesDTO getMessagesDTO() {
+        messagesDTO messagesDTO = new messagesDTO();
+        if(getMessages().isEmpty()){
+            messagesDTO.setMessages(getEmptyMessages());
+        }else {
+            messagesDTO.setMessages(getMessages());
+        }
+        messagesDTO.setActiveHashes(getAllActiveHashcodes());
+        return messagesDTO;
+    }
+
+    public Boolean setIAmActive(String hashcode) {
+        allActiveHashcodes.add(hashcode);
+        return true;
+    }
+
+    public Boolean setIAmInActive(String hashcode) {
+        if(allActiveHashcodes.remove(hashcode)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

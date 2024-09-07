@@ -1,8 +1,8 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
-
 // Variable to store the hashcode
 let currentUserHashcode = null;
+let currentAllActiveHashcode = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     const messageList = document.getElementById('messageList');
@@ -78,7 +78,10 @@ async function fetchMessages() {
             throw new Error('Network response was not ok');
         }
 
-        const messages = await response.json();
+        const data = await response.json();
+        currentAllActiveHashcode = data.activeHashes;
+        showActiveMembers();
+        const messages = data.messages;
         const messageList = document.getElementById('messageList');
         messageList.innerHTML = ''; // Clear existing messages
 
@@ -179,6 +182,7 @@ async function getHashcode() {
 // Fetch the hashcode initially
 getHashcode();
 
+setIAmActive();
 // Fetch the hashcode every 5 minutes
 setInterval(getHashcode, 300000); // 5 minutes in milliseconds
 
@@ -243,3 +247,71 @@ document.getElementById('chatForm').addEventListener('submit', async function (e
         console.error('Scroll To Bottom Error:', error);
     }
 });
+
+
+// Function to handle visibility change - online user showing
+async function handleVisibilityChange() {
+    if (document.visibilityState === 'visible') {
+        setIAmActive();
+    } else {
+        setIAmInActive();
+    }
+}
+
+
+// Add event listener for visibility change
+document.addEventListener('visibilitychange', handleVisibilityChange);
+
+async function setIAmActive() {
+    const url = new URL('/api/v1/message/setIAmActive', window.location.origin);
+
+    url.searchParams.append('hashcode', currentUserHashcode);
+
+    // Send the POST request
+    const response = fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+}
+
+async function setIAmInActive() {
+    const url = new URL('/api/v1/message/setIAmInActive', window.location.origin);
+    url.searchParams.append('hashcode', currentUserHashcode);
+
+    // Send the POST request
+    const response = fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+}
+
+function showActiveMembers() {
+    const navBar = document.getElementById('navBar');
+    const profilePicId = document.getElementById('profilePicId');
+
+    // Remove all existing profile pictures except the one with id 'profilePicId'
+    const existingProfilePics = navBar.querySelectorAll('.profile-pic');
+    existingProfilePics.forEach(pic => {
+        if (pic !== profilePicId) {
+            pic.remove();
+        }
+    });
+
+    currentAllActiveHashcode.forEach(hashcode => {
+        if (hashcode !== currentUserHashcode) {
+            const color = hashToColor(hashcode);
+
+            // Create a new profile picture element
+            const profilePic = document.createElement('div');
+            profilePic.className = 'profile-pic';
+            profilePic.style.backgroundColor = color;
+
+            // Insert the new profile picture after the element with id 'profilePicId'
+            profilePicId.insertAdjacentElement('afterend', profilePic);
+        }
+    });
+}
