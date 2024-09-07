@@ -1,6 +1,5 @@
 const messageInput = document.getElementById("messageInput");
 messageInput.focus();
-
 document.addEventListener('DOMContentLoaded', () => {
     const messageList = document.getElementById('messageList');
     const scrollDownBtn = document.getElementById('scrollDownBtn');
@@ -36,22 +35,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial scroll to bottom (optional)
     scrollToBottom();
-    
+
 });
 
 
 document.addEventListener("keydown", function (event) {
     const messageInput = document.getElementById("messageInput");
 
-    if (event.key === "Enter") {
-        if (document.activeElement !== messageInput) {
-            // If the dialog box (textarea) is not focused, focus on it
+    if (event.key === 'Enter') {
+        if (document.activeElement === messageInput) {
+            event.preventDefault(); // Prevent newline behavior
+            chatForm.requestSubmit(); // Use requestSubmit for better compatibility
+        } else {
+            // If the input is not focused, focus on it
             event.preventDefault();
             messageInput.focus();
-        } else {
-            // If the dialog box is already focused, submit the form
-            event.preventDefault(); // Prevent newline behavior
-            document.getElementById("chatForm").submit();
         }
     }
 
@@ -106,6 +104,12 @@ async function fetchMessages() {
     } catch (error) {
         console.error('Error fetching messages:', error);
     }
+
+    if (!(messageList.scrollHeight - messageList.scrollTop > messageList.clientHeight + 100)) {
+        const messageList = document.getElementById('messageList');
+        messageList.scrollTop = messageList.scrollHeight;
+    }
+
 }
 
 // Initial fetch
@@ -175,7 +179,7 @@ function adjustLayout() {
     const editorHeight = document.querySelector('.editor-container').offsetHeight;
 
     // Calculate the height of the message container
-    const messageContainerHeight = viewportHeight - (navbarHeight + editorHeight+20);
+    const messageContainerHeight = viewportHeight - (navbarHeight + editorHeight + 20);
 
     // Set the height of the message container
     document.querySelector('.message-container').style.height = `${messageContainerHeight}px`;
@@ -187,3 +191,42 @@ window.addEventListener('load', adjustLayout);
 // Run on resize
 window.addEventListener('resize', adjustLayout);
 
+document.getElementById('chatForm').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(form.action, {
+            method: form.method,
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        // Optionally, you can clear the input field after successful submission
+        document.getElementById('messageInput').value = '';
+        // Handle success (e.g., show a message to the user)
+
+    } catch (error) {
+        console.error('Error:', error);
+        // Handle error (e.g., show an error message to the user)
+    }
+    try {
+        await fetchMessages();
+    } catch (error) {
+        console.error("Fetch from send error: ", error);
+    }
+
+    try {
+        const messageList = document.getElementById('messageList');
+        messageList.scrollTop = messageList.scrollHeight;
+    } catch (error) {
+        console.error('Scroll To Bottom Error:', error);
+    }
+});
