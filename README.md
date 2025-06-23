@@ -1,2 +1,2 @@
 # ChatSphere
-Chat box app
+Chat app
